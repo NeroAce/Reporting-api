@@ -1,0 +1,1741 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model aatags {
+  id                               Int      @id(map: "aatags_pk") @default(autoincrement())
+  page_pageinfo_pagename           String?  @db.VarChar
+  page_pageinfo_language           String?  @db.VarChar
+  page_pageinfo_hier               String?  @db.VarChar
+  page_pageinfo_brand              String?  @db.VarChar
+  page_pageinfo_country            String?  @db.VarChar
+  page_pageinfo_destinationurl     String?  @db.VarChar
+  page_category_pagetype           String?  @db.VarChar
+  page_category_site               String?  @db.VarChar
+  page_category_primarycategory    String?  @db.VarChar
+  page_category_subcategory1       String?  @db.VarChar
+  page_category_subcategory2       String?  @db.VarChar
+  page_category_subcategory3       String?  @db.VarChar
+  user_segment_customerid          String?  @db.VarChar
+  user_segment_customerstatus      String?  @db.VarChar
+  user_segment_additionalid        String?  @db.VarChar
+  form_name                        String?  @db.VarChar
+  form_uniqueid                    String?  @db.VarChar
+  form_stepdetail                  String?  @db.VarChar
+  form_additionalinfo              String?  @db.VarChar
+  product_category_producttype     String?  @db.VarChar
+  product_category_primarycategory String?  @db.VarChar
+  product_category_subcategory1    String?  @db.VarChar
+  transaction_transactionid        String?  @db.VarChar
+  promo_promocode                  String?  @db.VarChar
+  lastactivityby                   Int
+  lastactivityon                   DateTime @db.Timestamp(6)
+  isactive                         Boolean  @default(true)
+  isdeleted                        Boolean
+  type                             String   @db.VarChar(2)
+  name                             String   @db.VarChar(200)
+  form_buttonname                  String?  @db.VarChar(200)
+  product_productinfo_productname  String?  @db.VarChar
+}
+
+model actionlogs {
+  id             Int         @id @default(autoincrement())
+  profileid      Int?
+  sessionlogid   Int
+  type           String      @db.VarChar(200)
+  url            String?     @db.VarChar(200)
+  other          String?     @db.VarChar(200)
+  lastactivityon DateTime    @db.Timestamp(6)
+  actions        String?     @db.VarChar(200)
+  profiles       profiles?   @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sessionlogs    sessionlogs @relation(fields: [sessionlogid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "actionlogs_sessionlogs_fk")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model adaptiveassessmentresponses {
+  id                   Int       @default(autoincrement())
+  adaptiveassessmentid Int
+  startdatetime        DateTime? @db.Timestamp(6)
+  enddatetime          DateTime? @db.Timestamp(6)
+  totalquestion        Int       @db.SmallInt
+  totalattempt         Int       @db.SmallInt
+  totalcorrectquestion Int       @db.SmallInt
+  totalmarks           Int       @db.SmallInt
+  scoredmarks          Int       @db.SmallInt
+  evaluationstatus     String?   @db.Char(1)
+  attemptstatus        String?   @db.Char(1)
+  jsonresponse         String?
+  isactive             Boolean
+  lastactivityon       DateTime  @db.Timestamp(6)
+  review               String?
+  overallreview        String?
+  totalpartialycorrect Int?      @db.SmallInt
+  totalwrong           Int       @default(0) @db.SmallInt
+  totalunattempted     Int       @default(0) @db.SmallInt
+  profileid            Int
+  incorrectquestions   String?   @db.VarChar(500)
+  isdeleted            Boolean   @default(false)
+  lastactivityby       Int       @default(1)
+  difficultylevel      Int       @default(1) @db.SmallInt
+  topics               String?   @db.VarChar(200)
+  careerpoints         Int       @default(0)
+
+  @@ignore
+}
+
+model adaptiveassessmentresponses_backup {
+  id                   Int                 @id(map: "adaptiveassessmentresponses_pk") @default(autoincrement())
+  adaptiveassessmentid Int
+  startdatetime        DateTime?           @db.Timestamp(6)
+  enddatetime          DateTime?           @db.Timestamp(6)
+  totalquestion        Int                 @db.SmallInt
+  totalattempt         Int                 @db.SmallInt
+  totalcorrectquestion Int                 @db.SmallInt
+  totalmarks           Int                 @db.SmallInt
+  scoredmarks          Int                 @db.SmallInt
+  evaluationstatus     String?             @db.Char(1)
+  attemptstatus        String?             @db.Char(1)
+  jsonresponse         String?
+  isactive             Boolean
+  lastactivityon       DateTime            @db.Timestamp(6)
+  review               String?
+  overallreview        String?
+  totalpartialycorrect Int?                @db.SmallInt
+  totalwrong           Int                 @default(0) @db.SmallInt
+  totalunattempted     Int                 @default(0) @db.SmallInt
+  profileid            Int
+  incorrectquestions   String?             @db.VarChar(500)
+  isdeleted            Boolean             @default(false)
+  lastactivityby       Int                 @default(1)
+  difficultylevel      Int                 @default(1) @db.SmallInt
+  topics               String?             @db.VarChar(200)
+  careerpoints         Int                 @default(0)
+  adaptiveassessments  adaptiveassessments @relation(fields: [adaptiveassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "adaptiveassessmentresponses_adaptiveassessments_fk")
+  profiles             profiles            @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "adaptiveassessmentresponses_profiles_fk")
+}
+
+model adaptiveassessments {
+  id                                 Int                                  @id(map: "adaptiveassessments_pk") @default(autoincrement())
+  url                                String                               @db.VarChar(200)
+  duration                           Int
+  marks                              Int
+  instructionsheet                   String?
+  isactive                           Boolean
+  isdeleted                          Boolean
+  lastactivityby                     Int
+  lastactivityon                     DateTime                             @db.Timestamp(6)
+  questionhint                       String?
+  ispublished                        Boolean                              @default(false)
+  pagetitle                          String?                              @db.VarChar(100)
+  subtitle                           String?                              @db.VarChar(200)
+  metatitle                          String?                              @db.VarChar(2000)
+  metadescription                    String?                              @db.VarChar(2000)
+  metakeywords                       String?                              @db.VarChar(2000)
+  htmldescription                    String?
+  title                              String?                              @db.VarChar
+  publishedon                        DateTime?                            @db.Timestamp(6)
+  allowevaluation                    Boolean                              @default(false)
+  allowreattempt                     Boolean                              @default(false)
+  refercode                          String?                              @db.VarChar(10)
+  ispreview                          Boolean                              @default(false)
+  courseid                           Int
+  refcourseid                        Int?
+  adaptiveassessmentresponses_backup adaptiveassessmentresponses_backup[]
+  adaptivequestions                  adaptivequestions[]
+  adaptiveusedquestions              adaptiveusedquestions[]
+}
+
+model adaptivequestionoptions {
+  id                 Int               @id(map: "adaptivequestionoptions_pk") @default(autoincrement())
+  adaptivequestionid Int
+  datatype           String?           @db.VarChar(255)
+  helptext           String?
+  text               String
+  iscorrect          Boolean?          @default(false)
+  maxlength          Int?
+  validation         String?           @db.VarChar
+  isactive           Boolean
+  isdeleted          Boolean
+  lastactivityby     Int
+  lastactivityon     DateTime          @db.Timestamp(6)
+  marks              Int               @default(0)
+  adaptivequestions  adaptivequestions @relation(fields: [adaptivequestionid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "adaptivequestionoptions_adaptivequestions_fk")
+}
+
+model adaptivequestions {
+  id                      Int                       @id(map: "adaptivequestions_pk") @default(autoincrement())
+  adaptiveassessmentid    Int
+  duration                Int
+  marks                   Int
+  questiontext            String?
+  difficultylevel         Int?
+  type                    String?                   @db.VarChar(255)
+  helptext                String?
+  solution                String?
+  mode                    String?                   @db.VarChar(20)
+  isactive                Boolean
+  isdeleted               Boolean
+  lastactivityby          Int
+  lastactivityon          DateTime                  @db.Timestamp(6)
+  rank                    Int                       @default(1)
+  isreviewrequired        String?                   @db.Char(1)
+  ishintshow              Boolean                   @default(false)
+  sectionname             String?                   @db.VarChar(100)
+  topics                  String?                   @db.VarChar(200)
+  adaptivequestionoptions adaptivequestionoptions[]
+  adaptiveassessments     adaptiveassessments       @relation(fields: [adaptiveassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "adaptivequestions_adaptiveassessments_fk")
+  adaptiveusedquestions   adaptiveusedquestions[]
+}
+
+model adaptiveusedquestions {
+  id                   Int                 @id(map: "adaptiveusedquestions_pk") @default(autoincrement())
+  adaptiveassessmentid Int
+  questionid           Int
+  profileid            Int
+  occurance            Int                 @default(1)
+  adaptiveassessments  adaptiveassessments @relation(fields: [adaptiveassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "adaptiveusedquestions_adaptiveassessments_fk")
+  adaptivequestions    adaptivequestions   @relation(fields: [questionid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "adaptiveusedquestions_adaptivequestions_fk")
+  profiles             profiles            @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "adaptiveusedquestions_profiles_fk")
+
+  @@index([adaptiveassessmentid, questionid, profileid], map: "adaptiveusedquestions_adaptiveassessmentid_idx")
+}
+
+model appmodules {
+  id               Int          @id @unique(map: "appmodules_id_idx") @default(autoincrement())
+  code             String       @db.VarChar(50)
+  title            String       @db.VarChar(50)
+  icon             String?      @db.VarChar(50)
+  displayorder     Int          @default(0)
+  ismenu           Boolean      @default(true)
+  url              String       @db.VarChar(500)
+  controllers      String       @db.VarChar(500)
+  parentid         Int?
+  isactive         Boolean      @default(true)
+  isdeleted        Boolean      @default(false)
+  lastactivityby   Int          @default(1)
+  lastactivityon   DateTime     @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  actionnames      String?      @db.VarChar(500)
+  appmodules       appmodules?  @relation("appmodulesToappmodules", fields: [parentid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_appmodules appmodules[] @relation("appmodulesToappmodules")
+
+  @@index([isactive, isdeleted, code], map: "appmodules_isactive_idx")
+}
+
+model blogresources {
+  id               Int       @id @unique(map: "blogresources_id_idx") @default(autoincrement())
+  title            String?   @db.VarChar(2000)
+  url              String?   @db.VarChar(2000)
+  description      String?
+  ispublished      Boolean   @default(false)
+  publishedon      DateTime? @db.Timestamp(6)
+  publishedby      String?   @db.VarChar(200)
+  image            String?   @db.VarChar(2000)
+  tags             String?
+  lastactivityon   DateTime  @db.Timestamp(6)
+  lastactivityby   Int?
+  isactive         Boolean   @default(true)
+  isdeleted        Boolean   @default(false)
+  shortdescription String?   @db.VarChar
+
+  @@index([lastactivityon, lastactivityby, isactive, isdeleted], map: "blogresources_lastactivityon_idx")
+  @@index([url, ispublished, publishedon(sort: Desc)], map: "blogresources_url_idx")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model careerpointlogs {
+  id             Int      @default(autoincrement())
+  profileid      Int
+  courseid       Int?
+  description    String   @db.VarChar(200)
+  careerpoints   Int
+  lastactivityon DateTime @db.Timestamp(6)
+  logtype        String?  @db.VarChar
+  isactive       Boolean? @default(true)
+
+  @@ignore
+}
+
+model careerpointlogs_backup {
+  id             Int      @id(map: "careerpointlogs_pkey") @default(autoincrement())
+  profileid      Int
+  courseid       Int?
+  description    String   @db.VarChar(200)
+  careerpoints   Int
+  lastactivityon DateTime @db.Timestamp(6)
+  logtype        String?  @db.VarChar
+  isactive       Boolean? @default(true)
+  courses        courses? @relation(fields: [courseid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "careerpointlogs_courseid_fkey")
+  profiles       profiles @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "careerpointlogs_profileid_fkey")
+}
+
+model carts {
+  id             Int       @id(map: "carts_pk") @unique(map: "carts_id_idx") @default(autoincrement())
+  profileid      Int?
+  cookieid       String?   @db.VarChar(128)
+  courseid       Int
+  isactive       Boolean   @default(true)
+  lastactivityon DateTime  @default(now()) @db.Timestamp(6)
+  courses        courses   @relation(fields: [courseid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "carts_courses_fk")
+  profiles       profiles? @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "carts_profiles_fk")
+
+  @@index([isactive, lastactivityon(sort: Desc)], map: "carts_isactive_idx")
+  @@index([profileid, cookieid, courseid], map: "carts_profileid_idx")
+}
+
+model categories {
+  id               Int               @id(map: "categories_pk") @unique(map: "categories_id_idx") @default(autoincrement())
+  title            String            @db.VarChar(200)
+  url              String?           @db.VarChar(200)
+  rank             Int               @default(0) @db.SmallInt
+  lastactivityby   Int
+  lastactivityon   DateTime          @db.Timestamp(6)
+  isactive         Boolean           @default(true)
+  parentid         Int?
+  isdeleted        Boolean           @default(false)
+  categories       categories?       @relation("categoriesTocategories", fields: [parentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_categories_fk")
+  other_categories categories[]      @relation("categoriesTocategories")
+  courses          courses[]
+  leaderboards     leaderboards[]
+  mockassessments  mockassessments[]
+  openassessments  openassessments[]
+  packages         packages[]
+  profiles         profiles[]
+  subscriptions    subscriptions[]
+  testimonials     testimonials[]
+
+  @@index([lastactivityby, lastactivityon(sort: Desc), isactive], map: "categories_lastactivityby_idx")
+  @@index([url, title, rank, parentid], map: "categories_url_idx")
+}
+
+model contactus {
+  id             Int      @id @unique(map: "contactus_id_idx") @default(autoincrement())
+  name           String   @db.VarChar(100)
+  emailid        String   @db.VarChar(100)
+  mobile         String?  @db.VarChar(30)
+  description    String   @db.VarChar(500)
+  lastactivityon DateTime @db.Timestamp(6)
+  isactive       Boolean
+  isdeleted      Boolean
+  lastactivityby Int      @default(1)
+
+  @@index([isactive, lastactivityon(sort: Desc), isdeleted], map: "contactus_isactive_idx")
+}
+
+model coursecurriculums {
+  id                                   Int                                    @id(map: "coursecurriculums_pk") @unique(map: "coursecurriculums_id_idx") @default(autoincrement())
+  coursesectionid                      Int?
+  contenttypeid                        String                                 @db.VarChar(3)
+  lecturename                          String                                 @db.VarChar(200)
+  lecturetitle                         String                                 @db.VarChar(200)
+  file                                 String?                                @db.VarChar(4000)
+  description                          String?                                @db.VarChar(2000)
+  duration                             Int?
+  size                                 Int?
+  rank                                 Int                                    @default(0) @db.SmallInt
+  lastactivityon                       DateTime                               @db.Timestamp(6)
+  isactive                             Boolean                                @default(true)
+  isdeleted                            Boolean
+  ispreview                            Boolean                                @default(false)
+  ispublished                          Boolean                                @default(true)
+  refcoursecurriculumid                Int?
+  lastactivityby                       Int                                    @default(1)
+  vdocipherid                          String?                                @db.VarChar(50)
+  coursecurriculums                    coursecurriculums?                     @relation("coursecurriculumsTocoursecurriculums", fields: [refcoursecurriculumid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coursecurriculums_coursecurriculums_fk")
+  other_coursecurriculums              coursecurriculums[]                    @relation("coursecurriculumsTocoursecurriculums")
+  coursesections                       coursesections?                        @relation(fields: [coursesectionid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coursecurriculums_coursesections_fk")
+  curriculumassessmentresponses_backup curriculumassessmentresponses_backup[]
+  curriculumassessments                curriculumassessments[]
+  curriculumquestions                  curriculumquestions[]
+
+  @@index([coursesectionid, contenttypeid, rank, ispreview, ispublished, refcoursecurriculumid], map: "coursecurriculums_coursesectionid_idx")
+  @@index([lastactivityon(sort: Desc), isactive, isdeleted], map: "coursecurriculums_lastactivityon_idx")
+}
+
+model courses {
+  id                     Int                      @id(map: "courses_pk") @unique(map: "courses_id_idx") @default(autoincrement())
+  categoryid             Int
+  profileid              Int
+  url                    String?                  @db.VarChar(200)
+  title                  String?                  @db.VarChar(200)
+  description            String?
+  htmldescription        String?
+  language               String                   @db.VarChar(200)
+  images                 String?                  @db.VarChar(200)
+  promovideo             String?                  @db.VarChar(4000)
+  studentsenrolled       Int                      @default(0)
+  publishedon            DateTime?                @db.Timestamp(6)
+  lastactivityby         Int
+  lastactivityon         DateTime                 @db.Timestamp(6)
+  isactive               Boolean                  @default(true)
+  isdeleted              Boolean
+  coursestreamid         Int
+  totallesson            Int?
+  totallecture           Int?
+  feature                String?                  @db.VarChar(2000)
+  playlistjson           String?
+  totalduration          Int?                     @default(0)
+  pagetitle              String?                  @db.VarChar(100)
+  subtitle               String?                  @db.VarChar(200)
+  metatitle              String?                  @db.VarChar(2000)
+  metadescription        String?                  @db.VarChar(2000)
+  metakeywords           String?                  @db.VarChar(2000)
+  careerpointlogs_backup careerpointlogs_backup[]
+  carts                  carts[]
+  categories             categories               @relation(fields: [categoryid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_categories_fk")
+  coursestreams          coursestreams            @relation(fields: [coursestreamid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_coursestreams_fk")
+  profiles               profiles                 @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_profiles_fk")
+  coursesections         coursesections[]
+  forumqas               forumqas[]
+  leaderboards           leaderboards[]
+  organisationincourses  organisationincourses[]
+  userincourses          userincourses[]
+
+  @@index([isdeleted, isactive, lastactivityon(sort: Desc), lastactivityby], map: "courses_isdeleted_idx")
+}
+
+model coursesections {
+  id                Int                 @id(map: "coursesections_pk") @unique(map: "coursesections_id_idx") @default(autoincrement())
+  courseid          Int
+  sectionname       String              @db.VarChar(200)
+  sectiontitle      String              @db.VarChar(200)
+  description       String?             @db.VarChar(2000)
+  rank              Int                 @default(0) @db.SmallInt
+  lastactivityon    DateTime            @db.Timestamp(6)
+  isactive          Boolean             @default(true)
+  isdeleted         Boolean             @default(false)
+  lastactivityby    Int                 @default(1)
+  topics            String?             @db.VarChar(200)
+  coursecurriculums coursecurriculums[]
+  courses           courses             @relation(fields: [courseid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coursesections_courses_fk")
+
+  @@index([courseid, rank], map: "coursesections_courseid_idx")
+  @@index([lastactivityon(sort: Desc), isactive, isdeleted], map: "coursesections_lastactivityon_idx")
+}
+
+model coursestreams {
+  id              Int               @id(map: "coursestreams_pk") @unique(map: "coursestreams_id_idx")
+  title           String            @db.VarChar(200)
+  description     String?           @db.VarChar(2000)
+  isactive        Boolean           @default(true)
+  isdeleted       Boolean
+  rank            Int               @db.SmallInt
+  url             String?           @db.VarChar(100)
+  courses         courses[]
+  mockassessments mockassessments[]
+
+  @@index([isdeleted, isactive], map: "coursestreams_isdeleted_idx")
+  @@index([title, url, rank], map: "coursestreams_title_idx")
+}
+
+model credittransactions {
+  id             Int      @id @unique(map: "credittransactions_id_idx") @default(autoincrement())
+  profileid      Int
+  credits        Decimal? @db.Decimal(15, 2)
+  totalcredits   Decimal? @db.Decimal(15, 2)
+  type           String?  @db.Char(1)
+  description    String?  @db.VarChar(200)
+  reason         String?  @db.VarChar(200)
+  isactive       Boolean  @default(true)
+  isdeleted      Boolean  @default(false)
+  lastactivityby Int?
+  lastactivityon DateTime @default(now()) @db.Timestamp(6)
+  orderid        Int?
+  orders         orders?  @relation(fields: [orderid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "credittransactions_orders_fk")
+  profiles       profiles @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_credittransactions_profiles")
+
+  @@index([isactive, isdeleted, lastactivityby, lastactivityon(sort: Desc)], map: "credittransactions_isactive_idx")
+  @@index([profileid, credits, type], map: "credittransactions_profileid_idx")
+}
+
+model curriculumassessmentarchiveresponses {
+  id                     Int       @id(map: "curriculumassessmentarchiveresponses_pk") @default(autoincrement())
+  profileid              Int
+  coursecurriculumid     Int
+  curriculumassessmentid Int
+  startdatetime          DateTime? @db.Timestamp(6)
+  enddatetime            DateTime? @db.Timestamp(6)
+  totalquestion          Int       @db.SmallInt
+  totalattempt           Int       @db.SmallInt
+  totalcorrectquestion   Int       @db.SmallInt
+  totalmarks             Int       @db.SmallInt
+  scoredmarks            Int       @db.SmallInt
+  evaluationstatus       String?   @db.Char(1)
+  attemptstatus          String?   @db.Char(1)
+  jsonresponse           String?
+  isactive               Boolean
+  lastactivityon         DateTime  @db.Timestamp(6)
+  review                 String?
+  overallreview          String?
+  totalpartialycorrect   Int?      @db.SmallInt
+  totalpartialcorrect    Int?      @db.SmallInt
+  totalwrong             Int       @default(0) @db.SmallInt
+  totalunattempted       Int       @default(0) @db.SmallInt
+  totalopen              Int       @default(0) @db.SmallInt
+  isdeleted              Boolean   @default(false)
+  lastactivityby         Int       @default(1)
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model curriculumassessmentarchiveresponses_new {
+  id                     Int       @default(autoincrement())
+  profileid              Int
+  coursecurriculumid     Int
+  curriculumassessmentid Int
+  startdatetime          DateTime? @db.Timestamp(6)
+  enddatetime            DateTime? @db.Timestamp(6)
+  totalquestion          Int       @db.SmallInt
+  totalattempt           Int       @db.SmallInt
+  totalcorrectquestion   Int       @db.SmallInt
+  totalmarks             Int       @db.SmallInt
+  scoredmarks            Int       @db.SmallInt
+  evaluationstatus       String?   @db.Char(1)
+  attemptstatus          String?   @db.Char(1)
+  jsonresponse           String?
+  isactive               Boolean
+  lastactivityon         DateTime  @db.Timestamp(6)
+  review                 String?
+  overallreview          String?
+  totalpartialycorrect   Int?      @db.SmallInt
+  totalpartialcorrect    Int?      @db.SmallInt
+  totalwrong             Int       @default(0) @db.SmallInt
+  totalunattempted       Int       @default(0) @db.SmallInt
+  totalopen              Int       @default(0) @db.SmallInt
+  isdeleted              Boolean   @default(false)
+  lastactivityby         Int       @default(1)
+
+  @@ignore
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model curriculumassessmentresponses {
+  id                     Int       @default(autoincrement())
+  profileid              Int
+  coursecurriculumid     Int
+  curriculumassessmentid Int
+  startdatetime          DateTime? @db.Timestamp(6)
+  enddatetime            DateTime? @db.Timestamp(6)
+  totalquestion          Int       @db.SmallInt
+  totalattempt           Int       @db.SmallInt
+  totalcorrectquestion   Int       @db.SmallInt
+  totalmarks             Int       @db.SmallInt
+  scoredmarks            Int       @db.SmallInt
+  evaluationstatus       String?   @db.Char(1)
+  attemptstatus          String?   @db.Char(1)
+  jsonresponse           String?
+  isactive               Boolean
+  lastactivityon         DateTime  @db.Timestamp(6)
+  review                 String?
+  overallreview          String?
+  totalpartialycorrect   Int?      @db.SmallInt
+  totalwrong             Int       @default(0) @db.SmallInt
+  totalunattempted       Int       @default(0) @db.SmallInt
+  totalopen              Int       @default(0) @db.SmallInt
+  isdeleted              Boolean   @default(false)
+  lastactivityby         Int       @default(1)
+
+  @@ignore
+}
+
+model curriculumassessmentresponses_backup {
+  id                     Int                   @id(map: "curriculumassessmentresponses_pk") @default(autoincrement())
+  profileid              Int
+  coursecurriculumid     Int
+  curriculumassessmentid Int
+  startdatetime          DateTime?             @db.Timestamp(6)
+  enddatetime            DateTime?             @db.Timestamp(6)
+  totalquestion          Int                   @db.SmallInt
+  totalattempt           Int                   @db.SmallInt
+  totalcorrectquestion   Int                   @db.SmallInt
+  totalmarks             Int                   @db.SmallInt
+  scoredmarks            Int                   @db.SmallInt
+  evaluationstatus       String?               @db.Char(1)
+  attemptstatus          String?               @db.Char(1)
+  jsonresponse           String?
+  isactive               Boolean
+  lastactivityon         DateTime              @db.Timestamp(6)
+  review                 String?
+  overallreview          String?
+  totalpartialycorrect   Int?                  @db.SmallInt
+  totalwrong             Int                   @default(0) @db.SmallInt
+  totalunattempted       Int                   @default(0) @db.SmallInt
+  totalopen              Int                   @default(0) @db.SmallInt
+  isdeleted              Boolean               @default(false)
+  lastactivityby         Int                   @default(1)
+  coursecurriculums      coursecurriculums     @relation(fields: [coursecurriculumid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "curriculumassessmentresponses_coursecurriculums_fk")
+  curriculumassessments  curriculumassessments @relation(fields: [curriculumassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "curriculumassessmentresponses_curriculumassessments_fk")
+  profiles               profiles              @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "curriculumassessmentresponses_profiles_fk")
+}
+
+model curriculumassessmentrevisions {
+  id                     Int                   @id @default(autoincrement())
+  curriculumassessmentid Int
+  questionpaper          Json?
+  isactive               Boolean
+  isdeleted              Boolean
+  lastactivityby         Int
+  lastactivityon         DateTime              @db.Timestamp(6)
+  curriculumassessments  curriculumassessments @relation(fields: [curriculumassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model curriculumassessments {
+  id                                   Int                                    @id(map: "curriculumassessments_pk") @default(autoincrement())
+  coursecurriculumid                   Int
+  duration                             Int
+  marks                                Int
+  instructionsheet                     String?
+  isactive                             Boolean
+  isdeleted                            Boolean
+  lastactivityby                       Int
+  lastactivityon                       DateTime                               @db.Timestamp(6)
+  questionhint                         String?
+  curriculumassessmentresponses_backup curriculumassessmentresponses_backup[]
+  curriculumassessmentrevisions        curriculumassessmentrevisions[]
+  coursecurriculums                    coursecurriculums                      @relation(fields: [coursecurriculumid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "curriculumassessments_coursecurriculums_fk")
+  curriculumquestions                  curriculumquestions[]
+}
+
+model curriculumquestionoptions {
+  id                   Int                 @id(map: "curriculumquestionoptions_pk") @default(autoincrement())
+  curriculumquestionid Int
+  datatype             String?             @db.VarChar(255)
+  helptext             String?
+  text                 String
+  iscorrect            Boolean?            @default(false)
+  maxlength            Int?
+  validation           String?             @db.VarChar
+  isactive             Boolean
+  isdeleted            Boolean
+  lastactivityby       Int
+  lastactivityon       DateTime            @db.Timestamp(6)
+  marks                Int                 @default(0)
+  mathex               String?
+  curriculumquestions  curriculumquestions @relation(fields: [curriculumquestionid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "curriculumquestionoptions_curriculumquestions_fk")
+}
+
+model curriculumquestions {
+  id                        Int                         @id(map: "curriculumquestions_pk") @default(autoincrement())
+  coursecurriculumid        Int
+  curriculumassessmentid    Int
+  duration                  Int
+  marks                     Int
+  questiontext              String?
+  difficultylevel           Int?
+  type                      String?                     @db.VarChar(255)
+  helptext                  String?
+  solution                  String?
+  mode                      String?                     @db.VarChar(20)
+  isactive                  Boolean
+  isdeleted                 Boolean
+  lastactivityby            Int
+  lastactivityon            DateTime                    @db.Timestamp(6)
+  rank                      Int                         @default(1)
+  isreviewrequired          String?                     @db.Char(1)
+  ishintshow                Boolean                     @default(false)
+  curriculumquestionoptions curriculumquestionoptions[]
+  coursecurriculums         coursecurriculums           @relation(fields: [coursecurriculumid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "curriculumquestions_coursecurriculums_fk")
+  curriculumassessments     curriculumassessments       @relation(fields: [curriculumassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "curriculumquestions_curriculumassessments_fk")
+}
+
+model custompayments {
+  id             Int       @id(map: "custompayments_pk") @unique(map: "custompayments_id_idx") @default(autoincrement())
+  profileid      Int
+  code           String    @db.VarChar(255)
+  amount         Decimal   @db.Decimal(15, 2)
+  expdate        DateTime? @db.Timestamp(6)
+  isactive       Boolean   @default(true)
+  isdeleted      Boolean   @default(false)
+  lastactivityby Int?
+  lastactivityon DateTime  @db.Timestamp(6)
+  title          String?   @db.VarChar
+  packageid      Int       @default(4)
+  courses        String?   @db.VarChar(4000)
+  packagename    String?   @db.VarChar(100)
+  autoupgrade    Boolean   @default(false)
+  profiles       profiles  @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "custompayments_profiles_fk")
+
+  @@index([isactive, isdeleted, lastactivityby, lastactivityon(sort: Desc)], map: "custompayments_isactive_idx")
+  @@index([profileid, code, expdate], map: "custompayments_profileid_idx")
+}
+
+model faqs {
+  id             Int      @id @unique(map: "faqs_id_idx") @default(autoincrement())
+  category       String   @db.VarChar(500)
+  question       String?  @db.VarChar(2000)
+  answer         String?  @db.VarChar(4000)
+  lastactivityby Int
+  lastactivityon DateTime @db.Timestamp(6)
+  isactive       Boolean  @default(true)
+  isdeleted      Boolean  @default(false)
+  rank           Int?     @default(0)
+
+  @@index([lastactivityby, lastactivityon(sort: Desc), isactive, isdeleted], map: "faqs_lastactivityby_idx")
+  @@index([rank, category], map: "faqs_rank_idx")
+}
+
+model forumqacomments {
+  id                    Int               @id @unique(map: "forumqacomments_id_idx") @default(autoincrement())
+  parentid              Int?
+  forumqaid             Int
+  profileid             Int
+  title                 String?
+  description           String?
+  tags                  String?
+  isemail               Boolean           @default(false)
+  postedon              DateTime          @default(now()) @db.Timestamp(6)
+  lastactivityon        DateTime          @default(now()) @db.Timestamp(6)
+  isactive              Boolean           @default(true)
+  isdeleted             Boolean           @default(false)
+  lastactivityby        Int?
+  url                   String?
+  ispublic              Boolean           @default(false)
+  ispublish             Boolean           @default(false)
+  forumqacomments       forumqacomments?  @relation("forumqacommentsToforumqacomments", fields: [parentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "forumqacomments_forumqacomments_fk")
+  other_forumqacomments forumqacomments[] @relation("forumqacommentsToforumqacomments")
+  forumqas              forumqas          @relation(fields: [forumqaid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "forumqacomments_forumqas_fk")
+  profiles              profiles          @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "forumqacomments_profiles_fk")
+
+  @@index([lastactivityon(sort: Desc), isactive, isdeleted, lastactivityby, postedon(sort: Desc)], map: "forumqacomments_lastactivityon_idx")
+  @@index([parentid, forumqaid, profileid, url, ispublic, ispublish], map: "forumqacomments_parentid_idx")
+}
+
+model forumqas {
+  id              Int               @id @default(autoincrement())
+  courseid        Int?
+  profileid       Int
+  title           String?
+  description     String?
+  tags            String?
+  isemail         Boolean           @default(false)
+  postedon        DateTime          @default(now()) @db.Timestamp(6)
+  totalcomments   Int               @default(0)
+  lastactivityon  DateTime          @default(now()) @db.Timestamp(6)
+  isactive        Boolean           @default(true)
+  isdeleted       Boolean           @default(false)
+  lastactivityby  Int?
+  url             String
+  ispublish       Boolean           @default(false)
+  forumqacomments forumqacomments[]
+  courses         courses?          @relation(fields: [courseid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "forumqas_courses_fk")
+  profiles        profiles          @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "forumqas_profiles_fk")
+}
+
+model gdscheduledfiles {
+  id             Int      @id @unique(map: "gdscheduledfiles_id_idx") @default(autoincrement())
+  url            String?  @db.VarChar(200)
+  status         String?  @db.VarChar(20)
+  isactive       Boolean  @default(true)
+  lastactivityon DateTime @default(now()) @db.Timestamp(6)
+  type           String?  @db.VarChar(20)
+  description    String?
+
+  @@index([url, status, isactive, lastactivityon(sort: Desc)], map: "gdscheduledfiles_url_idx")
+}
+
+model landingpages {
+  id             Int           @unique(map: "landingpages_id_idx") @default(autoincrement())
+  organisationid Int
+  title          String        @db.VarChar(100)
+  code           String        @db.VarChar(100)
+  url            String?       @db.VarChar(100)
+  allowtrial     Boolean       @default(true)
+  isactive       Boolean       @default(true)
+  isdeleted      Boolean       @default(false)
+  lastactivityby Int?
+  lastactivityon DateTime      @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  organisations  organisations @relation(fields: [organisationid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([isactive, isdeleted, lastactivityby, lastactivityon(sort: Desc)], map: "landingpages_isactive_idx")
+  @@index([organisationid, code, url], map: "landingpages_organisationid_idx")
+}
+
+model languages {
+  id       Int     @id(map: "languages_pk") @unique(map: "languages_id_idx") @default(autoincrement())
+  code     String  @db.VarChar(2)
+  title    String  @db.VarChar(100)
+  isactive Boolean @default(true)
+}
+
+model leaderboards {
+  id             Int         @id @default(autoincrement())
+  profileid      Int
+  categoryid     Int?
+  courseid       Int?
+  childname      String      @db.VarChar(200)
+  careerpoints   Int
+  rank           Int
+  changestatus   String      @db.Char(1)
+  lastactivityon DateTime    @db.Timestamp(6)
+  orggroup       String?     @db.VarChar(50)
+  categories     categories? @relation(fields: [categoryid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  courses        courses?    @relation(fields: [courseid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles       profiles    @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model liveclasses {
+  id             Int             @id @unique(map: "liveclasses_id_idx") @default(autoincrement())
+  subject        String          @db.VarChar(500)
+  topic          String?         @db.VarChar(500)
+  fileurl        String?         @db.VarChar(500)
+  classurl       String?         @db.VarChar(500)
+  duration       Int
+  scheduleon     DateTime        @db.Timestamp(6)
+  description    String?         @db.VarChar(2000)
+  isactive       Boolean         @default(true)
+  rank           Int?            @default(0)
+  teacher        String?         @db.VarChar(1000)
+  classlevel     String?         @db.VarChar(100)
+  notesfileurl   String?         @db.VarChar(500)
+  youtubeurl     String?         @db.VarChar(500)
+  isdeleted      Boolean         @default(false)
+  lastactivityby Int             @default(1)
+  lastactivityon DateTime        @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  courseid       String?         @db.VarChar
+  istrail        String?         @db.VarChar
+  image          String?         @db.VarChar
+  liveclasslogs  liveclasslogs[]
+
+  @@index([scheduleon, subject], map: "liveclasses_scheduleon_idx")
+}
+
+model liveclasslogs {
+  id              Int         @id @default(autoincrement())
+  profileid       Int
+  liveclassid     Int
+  logintime       DateTime    @db.Timestamp(6)
+  locationdetails String?
+  classurl        String?     @db.VarChar(250)
+  liveclasses     liveclasses @relation(fields: [liveclassid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles        profiles    @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "liveclasslogs_profileid_fk")
+}
+
+model localestringresources {
+  id            Int    @id @unique(map: "localestringresources_id_idx") @default(autoincrement())
+  resourcename  String @db.VarChar(200)
+  resourcevalue String @db.VarChar(4000)
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model measurement {
+  id        Int      @default(autoincrement())
+  city_id   Int
+  logdate   DateTime @db.Date
+  peaktemp  Int?
+  unitsales Int?
+  name      String?  @db.VarChar
+
+  @@ignore
+}
+
+model metatags {
+  id              Int      @id @unique(map: "metatags_id_idx") @default(autoincrement())
+  type            String   @db.VarChar(50)
+  title           String   @db.VarChar(100)
+  subtitle        String?  @db.VarChar(200)
+  metatitle       String   @db.VarChar(2000)
+  metadescription String?  @db.VarChar(2000)
+  metakeywords    String?  @db.VarChar(2000)
+  canonical       String?  @db.VarChar(200)
+  isnoindex       Boolean
+  isnofollow      Boolean
+  lastactivityby  Int
+  lastactivityon  DateTime @default(now()) @db.Timestamp(6)
+  isactive        Boolean  @default(true)
+  isdeleted       Boolean  @default(false)
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model mockassessmentresponses {
+  id                   Int       @default(autoincrement())
+  mockassessmentid     Int
+  startdatetime        DateTime? @db.Timestamp(6)
+  enddatetime          DateTime? @db.Timestamp(6)
+  totalquestion        Int       @db.SmallInt
+  totalattempt         Int       @db.SmallInt
+  totalcorrectquestion Int       @db.SmallInt
+  totalmarks           Int       @db.SmallInt
+  scoredmarks          Int       @db.SmallInt
+  evaluationstatus     String?   @db.Char(1)
+  attemptstatus        String?   @db.Char(1)
+  jsonresponse         String?
+  isactive             Boolean
+  lastactivityon       DateTime  @db.Timestamp(6)
+  review               String?
+  overallreview        String?
+  totalpartialycorrect Int?      @db.SmallInt
+  totalwrong           Int       @default(0) @db.SmallInt
+  totalunattempted     Int       @default(0) @db.SmallInt
+  profileid            Int
+  incorrectquestions   String?   @db.VarChar(500)
+  isdeleted            Boolean   @default(false)
+  lastactivityby       Int       @default(1)
+
+  @@ignore
+}
+
+model mockassessmentresponses_backup {
+  id                   Int             @id(map: "mockassessmentresponses_pk") @default(autoincrement())
+  mockassessmentid     Int
+  startdatetime        DateTime?       @db.Timestamp(6)
+  enddatetime          DateTime?       @db.Timestamp(6)
+  totalquestion        Int             @db.SmallInt
+  totalattempt         Int             @db.SmallInt
+  totalcorrectquestion Int             @db.SmallInt
+  totalmarks           Int             @db.SmallInt
+  scoredmarks          Int             @db.SmallInt
+  evaluationstatus     String?         @db.Char(1)
+  attemptstatus        String?         @db.Char(1)
+  jsonresponse         String?
+  isactive             Boolean
+  lastactivityon       DateTime        @db.Timestamp(6)
+  review               String?
+  overallreview        String?
+  totalpartialycorrect Int?            @db.SmallInt
+  totalwrong           Int             @default(0) @db.SmallInt
+  totalunattempted     Int             @default(0) @db.SmallInt
+  profileid            Int
+  incorrectquestions   String?         @db.VarChar(500)
+  isdeleted            Boolean         @default(false)
+  lastactivityby       Int             @default(1)
+  mockassessments      mockassessments @relation(fields: [mockassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mockassessmentresponses_mockassessments_fk")
+  profiles             profiles        @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mockassessmentresponses_profiles_fk")
+}
+
+model mockassessments {
+  id                             Int                              @id(map: "mockassessments_pk") @default(autoincrement())
+  url                            String                           @db.VarChar(200)
+  duration                       Int
+  marks                          Int
+  instructionsheet               String?
+  isactive                       Boolean
+  isdeleted                      Boolean
+  lastactivityby                 Int
+  lastactivityon                 DateTime                         @db.Timestamp(6)
+  questionhint                   String?
+  ispublished                    Boolean                          @default(false)
+  pagetitle                      String?                          @db.VarChar(100)
+  subtitle                       String?                          @db.VarChar(200)
+  metatitle                      String?                          @db.VarChar(2000)
+  metadescription                String?                          @db.VarChar(2000)
+  metakeywords                   String?                          @db.VarChar(2000)
+  htmldescription                String?
+  categoryid                     Int
+  title                          String?                          @db.VarChar
+  publishedon                    DateTime?                        @db.Timestamp(6)
+  coursestreamid                 Int
+  allowevaluation                Boolean                          @default(false)
+  allowreattempt                 Boolean                          @default(false)
+  refercode                      String?                          @db.VarChar(10)
+  ispreview                      Boolean                          @default(false)
+  allowregistrations             Boolean                          @default(true)
+  printpdf                       String?                          @db.VarChar(500)
+  mockassessmentresponses_backup mockassessmentresponses_backup[]
+  categories                     categories                       @relation(fields: [categoryid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mockassessments_categories_fk")
+  coursestreams                  coursestreams                    @relation(fields: [coursestreamid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mockassessments_coursestreams_fk")
+  mockquestions                  mockquestions[]
+  userinmockassessments          userinmockassessments[]
+}
+
+model mockquestionoptions {
+  id             Int           @id(map: "mockquestionoptions_pk") @default(autoincrement())
+  mockquestionid Int
+  datatype       String?       @db.VarChar(255)
+  helptext       String?
+  text           String
+  iscorrect      Boolean?      @default(false)
+  maxlength      Int?
+  validation     String?       @db.VarChar
+  isactive       Boolean
+  isdeleted      Boolean
+  lastactivityby Int
+  lastactivityon DateTime      @db.Timestamp(6)
+  marks          Int           @default(0)
+  mockquestions  mockquestions @relation(fields: [mockquestionid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mockquestionoptions_mockquestions_fk")
+}
+
+model mockquestions {
+  id                  Int                   @id(map: "mockquestions_pk") @default(autoincrement())
+  mockassessmentid    Int
+  duration            Int
+  marks               Int
+  questiontext        String?
+  difficultylevel     Int?
+  type                String?               @db.VarChar(255)
+  helptext            String?
+  solution            String?
+  mode                String?               @db.VarChar(20)
+  isactive            Boolean
+  isdeleted           Boolean
+  lastactivityby      Int
+  lastactivityon      DateTime              @db.Timestamp(6)
+  rank                Int                   @default(1)
+  isreviewrequired    String?               @db.Char(1)
+  ishintshow          Boolean               @default(false)
+  sectionname         String?               @db.VarChar(100)
+  mockquestionoptions mockquestionoptions[]
+  mockassessments     mockassessments       @relation(fields: [mockassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mockquestions_mockassessments_fk")
+}
+
+model notifications {
+  id             Int       @id @unique(map: "notifications_id_idx") @default(autoincrement())
+  profileid      Int?
+  jsondata       String
+  lastactivityby Int
+  lastactivityon DateTime  @db.Timestamp(6)
+  isactive       Boolean   @default(true)
+  isdeleted      Boolean   @default(false)
+  profiles       profiles? @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notifications_profiles_fk")
+
+  @@index([lastactivityby, lastactivityon(sort: Desc), isactive, isdeleted], map: "notifications_lastactivityby_idx")
+  @@index([profileid])
+}
+
+model openassessmentresponses {
+  id                   Int             @id(map: "openassessmentresponses_pk") @default(autoincrement())
+  openassessmentid     Int
+  startdatetime        DateTime?       @db.Timestamp(6)
+  enddatetime          DateTime?       @db.Timestamp(6)
+  totalquestion        Int             @db.SmallInt
+  totalattempt         Int             @db.SmallInt
+  totalcorrectquestion Int             @db.SmallInt
+  totalmarks           Int             @db.SmallInt
+  scoredmarks          Int             @db.SmallInt
+  evaluationstatus     String?         @db.Char(1)
+  attemptstatus        String?         @db.Char(1)
+  jsonresponse         String?
+  isactive             Boolean
+  lastactivityon       DateTime        @db.Timestamp(6)
+  review               String?
+  overallreview        String?
+  totalpartialycorrect Int?            @db.SmallInt
+  totalwrong           Int             @default(0) @db.SmallInt
+  totalunattempted     Int             @default(0) @db.SmallInt
+  sessionid            String?         @db.VarChar
+  profileid            Int?
+  name                 String?         @db.VarChar(100)
+  emailid              String?         @db.VarChar(100)
+  mobile               String?         @db.VarChar(100)
+  childclass           String?         @db.VarChar(100)
+  school               String?         @db.VarChar(100)
+  isdeleted            Boolean         @default(false)
+  lastactivityby       Int             @default(1)
+  openassessments      openassessments @relation(fields: [openassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "openassessmentresponses_openassessments_fk")
+  profiles             profiles?       @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "openassessmentresponses_profiles_fk")
+}
+
+model openassessments {
+  id                      Int                       @id(map: "openassessments_pk") @default(autoincrement())
+  url                     String                    @db.VarChar(200)
+  duration                Int
+  marks                   Int
+  instructionsheet        String?
+  isactive                Boolean
+  isdeleted               Boolean
+  lastactivityby          Int
+  lastactivityon          DateTime                  @db.Timestamp(6)
+  questionhint            String?
+  ispublished             Boolean                   @default(false)
+  pagetitle               String?                   @db.VarChar(100)
+  subtitle                String?                   @db.VarChar(200)
+  metatitle               String?                   @db.VarChar(2000)
+  metadescription         String?                   @db.VarChar(2000)
+  metakeywords            String?                   @db.VarChar(2000)
+  htmldescription         String?
+  categoryid              Int
+  title                   String?                   @db.VarChar
+  publishedon             DateTime?                 @db.Timestamp(6)
+  openassessmentresponses openassessmentresponses[]
+  categories              categories                @relation(fields: [categoryid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "openassessments_categories_fk")
+  openquestions           openquestions[]
+}
+
+model openquestionoptions {
+  id             Int           @id(map: "openquestionoptions_pk") @default(autoincrement())
+  openquestionid Int
+  datatype       String?       @db.VarChar(255)
+  helptext       String?
+  text           String
+  iscorrect      Boolean?      @default(false)
+  maxlength      Int?
+  validation     String?       @db.VarChar
+  isactive       Boolean
+  isdeleted      Boolean
+  lastactivityby Int
+  lastactivityon DateTime      @db.Timestamp(6)
+  openquestions  openquestions @relation(fields: [openquestionid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "openquestionoptions_openquestions_fk")
+}
+
+model openquestions {
+  id                  Int                   @id(map: "openquestions_pk") @default(autoincrement())
+  openassessmentid    Int
+  duration            Int
+  marks               Int
+  questiontext        String?
+  difficultylevel     Int?
+  type                String?               @db.VarChar(255)
+  helptext            String?
+  solution            String?
+  mode                String?               @db.VarChar(20)
+  isactive            Boolean
+  isdeleted           Boolean
+  lastactivityby      Int
+  lastactivityon      DateTime              @db.Timestamp(6)
+  rank                Int                   @default(1)
+  isreviewrequired    String?               @db.Char(1)
+  ishintshow          Boolean               @default(false)
+  openquestionoptions openquestionoptions[]
+  openassessments     openassessments       @relation(fields: [openassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "openquestions_openassessments_fk")
+}
+
+model openvideos {
+  id             Int      @id @default(autoincrement())
+  url            String?  @db.VarChar(500)
+  title          String?  @db.VarChar(500)
+  lastactivityby Int?
+  lastactivityon DateTime @db.Timestamp(6)
+  isactive       Boolean  @default(true)
+  isdeleted      Boolean  @default(false)
+  lecturefile    String?
+}
+
+model orderdetails {
+  id             Int      @id(map: "orderdetails_pk") @default(autoincrement())
+  orderid        Int
+  price          Decimal  @default(0) @db.Decimal(10, 2)
+  discount       Decimal  @default(0) @db.Decimal(10, 2)
+  sellingprice   Decimal  @default(0) @db.Decimal(10, 2)
+  isactive       Boolean
+  isdeleted      Boolean
+  lastactivityby Int
+  lastactivityon DateTime @db.Timestamp(6)
+  courseid       Int?
+  orders         orders   @relation(fields: [orderid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orderdetails_orders_fk")
+}
+
+model orders {
+  id                  Int                  @id(map: "orders_pk") @default(autoincrement())
+  profileid           Int
+  orderno             String               @db.VarChar(50)
+  transactionid       String?              @db.VarChar(50)
+  discount            Decimal?             @db.Decimal(10, 2)
+  total               Decimal              @db.Decimal(10, 2)
+  orderdate           DateTime             @db.Timestamp(6)
+  paymentmethod       String?              @db.VarChar(50)
+  paymentamount       Decimal?             @db.Decimal(10, 2)
+  paymentreceiveddate DateTime?            @db.Timestamp(6)
+  orderstatus         String?              @db.VarChar(50)
+  firstname           String?              @db.VarChar(100)
+  lastname            String?              @db.VarChar(100)
+  email               String?              @db.VarChar(50)
+  country             String?              @db.VarChar(100)
+  isactive            Boolean
+  isdeleted           Boolean
+  lastactivityby      Int
+  lastactivityon      DateTime             @db.Timestamp(6)
+  jsonresponse        String?
+  creditdiscount      Decimal?             @default(0) @db.Decimal(10, 2)
+  paymentrequestjson  String?
+  packageid           Int?
+  title               String?              @db.VarChar
+  parentid            Int?
+  referralcode        String?              @db.VarChar(20)
+  parenttransactionid String?              @db.VarChar(100)
+  currency            String?              @db.VarChar(20)
+  cardtype            String?              @db.VarChar(20)
+  autoupgrade         Boolean              @default(true)
+  upgraded            Boolean              @default(false)
+  credits             Int                  @default(0)
+  refund              Decimal              @default(0) @db.Decimal(20, 2)
+  credittransactions  credittransactions[]
+  orderdetails        orderdetails[]
+  profiles            profiles             @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_profiles_fk")
+  recurringpayments   recurringpayments[]
+  refunds             refunds[]
+  subscriptions       subscriptions[]
+}
+
+model organisationincourses {
+  id                 Int           @id @default(autoincrement())
+  organisationid     Int
+  courseid           Int
+  price              Decimal?      @default(0) @db.Decimal(10, 2)
+  sellingprice       Decimal?      @default(0) @db.Decimal(10, 2)
+  annualprice        Decimal?      @default(0) @db.Decimal(10, 2)
+  annualsellingprice Decimal?      @default(0) @db.Decimal(10, 2)
+  ispaid             Boolean       @default(true)
+  iscombo            Boolean       @default(false)
+  isgrouped          Boolean       @default(false)
+  allowregistrations Boolean       @default(true)
+  iscomingsoon       Boolean       @default(true)
+  showlisting        Boolean       @default(true)
+  isactive           Boolean       @default(true)
+  isdeleted          Boolean       @default(false)
+  lastactivityby     Int?
+  lastactivityon     DateTime      @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  courses            courses       @relation(fields: [courseid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  organisations      organisations @relation(fields: [organisationid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model organisations {
+  id                      Int                     @unique(map: "organisations_id_idx") @default(autoincrement())
+  title                   String                  @db.VarChar(100)
+  contactpersonname       String                  @db.VarChar(100)
+  country                 String?                 @db.VarChar(100)
+  emailid                 String                  @db.VarChar(200)
+  mobile                  String?                 @db.VarChar(50)
+  landline                String?                 @db.VarChar(50)
+  registeredon            DateTime                @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  isactive                Boolean                 @default(true)
+  isdeleted               Boolean                 @default(false)
+  lastactivityby          Int?
+  lastactivityon          DateTime                @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  isdefault               Boolean                 @default(false)
+  defaultcurrency         String                  @default("SGD") @db.VarChar(3)
+  defaultsubscriptiontype String                  @default("Annual") @db.VarChar(100)
+  cardtypes               String?                 @db.VarChar(100)
+  isautorenew             Boolean                 @default(false)
+  orggroup                String?                 @default("88P") @db.VarChar(50)
+  landingpages            landingpages[]
+  organisationincourses   organisationincourses[]
+  paymentgateways         paymentgateways[]
+  profiles                profiles[]
+
+  @@index([registeredon(sort: Desc), emailid, isactive, isdeleted, lastactivityby, lastactivityon(sort: Desc), isdefault], map: "organisations_registeredon_idx")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model orig_table {
+  id   Int    @default(autoincrement())
+  data Float? @default(dbgenerated("random()"))
+
+  @@index([data], map: "orig_data_index")
+  @@index([id], map: "orig_id_index")
+  @@ignore
+}
+
+model otprequests {
+  id             Int      @id @unique(map: "otprequests_id_idx") @default(autoincrement())
+  name           String   @db.VarChar(100)
+  emailid        String   @db.VarChar(100)
+  mobile         String?  @db.VarChar(30)
+  otp            String?  @db.VarChar(10)
+  lastactivityon DateTime @db.Timestamp(6)
+
+  @@index([mobile, lastactivityon(sort: Desc)], map: "otprequests_mobile_idx")
+}
+
+model packages {
+  id             Int         @id(map: "profiles_pkg") @unique(map: "packages_pk") @default(autoincrement())
+  categoryid     Int?
+  name           String      @db.VarChar(200)
+  description    String?
+  maxcourse      Int         @default(1)
+  displayorder   Int         @default(1)
+  ispaid         Boolean     @default(true)
+  isactive       Boolean     @default(true)
+  isdeleted      Boolean     @default(false)
+  lastactivityby Int?
+  lastactivityon DateTime    @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  categories     categories? @relation(fields: [categoryid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles       profiles[]
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model part_table {
+  id   Int    @default(autoincrement())
+  data Float? @default(dbgenerated("random()"))
+
+  @@ignore
+}
+
+model paymentgateways {
+  id             Int           @unique(map: "paymentgateways_id_idx") @default(autoincrement())
+  organisationid Int
+  title          String        @db.VarChar(100)
+  jsondata       String?       @db.VarChar(2000)
+  isactive       Boolean       @default(true)
+  cardtypes      String?       @db.VarChar
+  organisations  organisations @relation(fields: [organisationid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model profilediscussions {
+  id                                              Int                   @id @unique(map: "profilediscussions_id_idx") @default(autoincrement())
+  profileid                                       Int
+  teacherid                                       Int?
+  registrationsessionid                           Int?
+  label                                           String?               @db.VarChar(50)
+  status                                          String?               @db.VarChar(50)
+  conversations                                   String?
+  remindon                                        DateTime?             @db.Timestamp(6)
+  remark                                          String?               @db.VarChar(500)
+  isactive                                        Boolean               @default(true)
+  isdeleted                                       Boolean               @default(false)
+  lastactivityby                                  Int?
+  lastactivityon                                  DateTime              @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  profiles_profilediscussions_profileidToprofiles profiles              @relation("profilediscussions_profileidToprofiles", fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  registrationsessions                            registrationsessions? @relation(fields: [registrationsessionid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles_profilediscussions_teacheridToprofiles profiles?             @relation("profilediscussions_teacheridToprofiles", fields: [teacherid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([isactive, isdeleted, lastactivityby, lastactivityon(sort: Desc), remindon(sort: Desc)], map: "profilediscussions_isactive_idx")
+  @@index([profileid, teacherid, registrationsessionid], map: "profilediscussions_profileid_idx")
+}
+
+model profiles {
+  id                                                        Int                                    @id(map: "profiles_pk") @default(autoincrement())
+  userid                                                    String                                 @db.VarChar(128)
+  firstname                                                 String                                 @db.VarChar(100)
+  lastname                                                  String?                                @db.VarChar(100)
+  country                                                   String?                                @db.VarChar(100)
+  emailid                                                   String                                 @db.VarChar(200)
+  mobile                                                    String?                                @db.VarChar(50)
+  photo                                                     String?                                @db.VarChar(200)
+  biography                                                 String?
+  googlesharelink                                           String?                                @db.VarChar(2000)
+  about                                                     String?
+  isteacher                                                 Boolean
+  isactive                                                  Boolean
+  isdeleted                                                 Boolean
+  lastactivityby                                            Int?
+  lastactivityon                                            DateTime
+  parentid                                                  Int?
+  iscompleted                                               Boolean                                @default(false)
+  role                                                      String?                                @db.VarChar(100)
+  rank                                                      Int?
+  jsondata                                                  String?                                @db.VarChar(2000)
+  packageid                                                 Int?
+  joindate                                                  DateTime?                              @db.Date
+  validupto                                                 DateTime?                              @db.Date
+  maxcourselimit                                            String?                                @db.VarChar
+  verificationcode                                          String?                                @db.VarChar(20)
+  registeredon                                              DateTime                               @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  referby                                                   String?                                @db.VarChar(20)
+  credits                                                   Decimal?                               @db.Decimal(10, 2)
+  referbycredited                                           Boolean                                @default(false)
+  countrycode                                               String?                                @db.VarChar(5)
+  categoryid                                                Int?
+  referralcode                                              String?                                @db.VarChar(20)
+  includerevisionpack                                       Boolean                                @default(false)
+  cardtoken                                                 String?                                @db.VarChar(100)
+  organisationid                                            Int                                    @default(1)
+  registrationsessionid                                     Int                                    @default(1)
+  careerpoints                                              Int                                    @default(0)
+  leaderboardrank                                           Int                                    @default(0)
+  skilllevel                                                Int                                    @default(0)
+  badges                                                    String?                                @db.VarChar(2000)
+  schoolname                                                String?                                @db.VarChar(200)
+  childphone                                                String?                                @db.VarChar(20)
+  childemailid                                              String?                                @db.VarChar(100)
+  locationcode                                              String?                                @db.VarChar(20)
+  referrerurl                                               String?                                @db.VarChar(500)
+  isdnd                                                     Boolean?                               @default(false)
+  contact1                                                  String?                                @db.VarChar(20)
+  actionlogs                                                actionlogs[]
+  adaptiveassessmentresponses_backup                        adaptiveassessmentresponses_backup[]
+  adaptiveusedquestions                                     adaptiveusedquestions[]
+  careerpointlogs_backup                                    careerpointlogs_backup[]
+  carts                                                     carts[]
+  courses                                                   courses[]
+  credittransactions                                        credittransactions[]
+  curriculumassessmentresponses_backup                      curriculumassessmentresponses_backup[]
+  custompayments                                            custompayments[]
+  forumqacomments                                           forumqacomments[]
+  forumqas                                                  forumqas[]
+  leaderboards                                              leaderboards[]
+  liveclasslogs                                             liveclasslogs[]
+  mockassessmentresponses_backup                            mockassessmentresponses_backup[]
+  notifications                                             notifications[]
+  openassessmentresponses                                   openassessmentresponses[]
+  orders                                                    orders[]
+  profilediscussions_profilediscussions_profileidToprofiles profilediscussions[]                   @relation("profilediscussions_profileidToprofiles")
+  profilediscussions_profilediscussions_teacheridToprofiles profilediscussions[]                   @relation("profilediscussions_teacheridToprofiles")
+  categories                                                categories?                            @relation(fields: [categoryid], references: [id])
+  packages                                                  packages?                              @relation(fields: [packageid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "profiles_fkg")
+  organisations                                             organisations                          @relation(fields: [organisationid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles                                                  profiles?                              @relation("profilesToprofiles", fields: [parentid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "profiles_profiles_fk")
+  other_profiles                                            profiles[]                             @relation("profilesToprofiles")
+  registrationsessions                                      registrationsessions                   @relation(fields: [registrationsessionid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profilesettings                                           profilesettings[]
+  profilestats                                              profilestats[]
+  recurringpayments                                         recurringpayments[]
+  sessionlogs                                               sessionlogs[]
+  subscribes                                                subscribes[]
+  subscriptions                                             subscriptions[]
+  testimonials                                              testimonials[]
+  tokens                                                    tokens[]
+  userincourses                                             userincourses[]
+  userinmockassessments                                     userinmockassessments[]
+  userpermissions                                           userpermissions[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model profiles_logs {
+  id         Int      @default(autoincrement())
+  profileid  Int
+  packageid  Int
+  changed_on DateTime @db.Timestamp(6)
+
+  @@ignore
+}
+
+model profilesettings {
+  id        Int      @id(map: "profilesettings_pk") @unique(map: "profilesettings_id_idx") @default(autoincrement())
+  profileid Int
+  isactive  Boolean  @default(true)
+  key       String   @db.VarChar(200)
+  value     String   @db.VarChar(200)
+  profiles  profiles @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([isactive])
+  @@index([key])
+  @@index([profileid])
+}
+
+model profilestats {
+  id              Int      @id(map: "profilestats_pk") @unique(map: "profilestats_id_idx") @default(autoincrement())
+  profileid       Int
+  isactive        Boolean  @default(true)
+  childcount      Int      @default(0)
+  videocount      Int      @default(0)
+  assessmentcount Int      @default(0)
+  adaptivecount   Int      @default(0)
+  lastactivityon  DateTime @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  profiles        profiles @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([isactive])
+  @@index([profileid])
+}
+
+model promotions {
+  id             Int       @id @unique(map: "promotions_id_idx") @default(autoincrement())
+  title          String    @db.VarChar(100)
+  code           String?   @db.VarChar(100)
+  displayorder   Int       @default(0)
+  startdate      DateTime? @db.Timestamp(6)
+  enddate        DateTime? @db.Timestamp(6)
+  usagelimit     Int
+  conditions     String?   @db.VarChar(2000)
+  actions        String?   @db.VarChar(2000)
+  priorityscore  Int
+  lastactivityby Int
+  lastactivityon DateTime  @default(now()) @db.Timestamp(6)
+  isactive       Boolean   @default(true)
+  isdeleted      Boolean   @default(false)
+  type           String    @default("DISC") @db.VarChar(20)
+
+  @@index([code, displayorder, startdate, enddate], map: "promotions_code_idx")
+  @@index([lastactivityby, lastactivityon(sort: Desc), isactive, isdeleted], map: "promotions_lastactivityby_idx")
+}
+
+model recurringpayments {
+  id                Int       @id @unique(map: "recurringpayments_id_idx") @default(autoincrement())
+  profileid         Int
+  orderid           Int
+  packageid         Int
+  paymentgatwaytype String?   @db.VarChar(50)
+  dbstype           String?   @db.VarChar(20)
+  paymentamount     Decimal?  @db.Decimal(10, 2)
+  paymentnextdate   DateTime? @db.Timestamp(6)
+  lastactivityon    DateTime  @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  isactive          Boolean   @default(true)
+  isdeleted         Boolean   @default(false)
+  orders            orders    @relation(fields: [orderid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles          profiles  @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model refunds {
+  id             Int      @id(map: "refunds_pk") @default(autoincrement())
+  orderid        Int
+  amount         Decimal  @default(0) @db.Decimal(10, 2)
+  refunddate     DateTime @db.Timestamp(6)
+  description    String?  @db.VarChar(200)
+  isactive       Boolean
+  isdeleted      Boolean
+  lastactivityby Int
+  lastactivityon DateTime @db.Timestamp(6)
+  orders         orders   @relation(fields: [orderid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "refunds_orders_fk")
+
+  @@index([orderid, refunddate, isactive, isdeleted], map: "refunds_orderid_idx")
+}
+
+model registrationsessions {
+  id                 Int                  @unique(map: "registrationsessions_id_idx") @default(autoincrement())
+  title              String?              @db.VarChar(100)
+  startdate          DateTime             @db.Date
+  enddate            DateTime             @db.Date
+  iscurrent          Boolean              @default(false)
+  isonline           Boolean              @default(false)
+  isactive           Boolean              @default(true)
+  lastactivityon     DateTime             @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  lastactivityby     Int                  @default(1)
+  isdeleted          Boolean              @default(false)
+  profilediscussions profilediscussions[]
+  profiles           profiles[]
+  subscriptions      subscriptions[]
+
+  @@index([startdate, enddate, iscurrent, isonline, isactive], map: "registrationsessions_startdate_idx")
+}
+
+model rolepermissions {
+  id             Int       @id @default(autoincrement())
+  roleid         String    @db.VarChar(128)
+  permissions    String?   @db.VarChar(2000)
+  isactive       Boolean   @default(true)
+  lastactivityby Int?
+  lastactivityon DateTime? @db.Timestamp(6)
+}
+
+model savefilter {
+  id             Int       @id @default(autoincrement())
+  profileid      Int?
+  filterdate     DateTime? @db.Date
+  isactive       Boolean   @default(true)
+  isdeleted      Boolean   @default(false)
+  lastactivityby Int?
+  lastactivityon DateTime  @default(dbgenerated("CURRENT_DATE")) @db.Date
+}
+
+model scheduletasklogs {
+  id             Int       @id @unique(map: "scheduletasklogs_id_idx") @default(autoincrement())
+  scheduletaskid Int
+  startedon      DateTime? @db.Timestamp(6)
+  settledon      DateTime? @db.Timestamp(6)
+  issettled      Boolean
+  taskstatus     String    @db.VarChar
+  progress       Int
+  result         String?
+  error          String?   @db.VarChar
+  lastactivityon DateTime  @db.Timestamp(6)
+}
+
+model scheduletasks {
+  id             Int       @id @unique(map: "scheduletasks_id_idx") @default(autoincrement())
+  name           String    @db.VarChar(100)
+  type           String    @db.VarChar(100)
+  cronexpression String    @db.VarChar(1000)
+  nextrunon      DateTime? @db.Timestamp(6)
+  ishidden       Boolean   @default(false)
+  priority       Int       @default(0)
+  data           String?
+  taskstatus     String?   @db.VarChar
+  progress       Int       @default(0)
+  result         String?
+  error          String?   @db.VarChar
+  startedon      DateTime? @db.Timestamp(6)
+  settledon      DateTime? @db.Timestamp(6)
+  issettled      Boolean   @default(false)
+  retries        Int       @default(0)
+  attempts       Int       @default(0)
+  lastactivityon DateTime  @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  isactive       Boolean   @default(true)
+  isdeleted      Boolean   @default(false)
+  timeout        Int       @default(0)
+  lastactivityby Int       @default(1)
+
+  @@index([lastactivityon, isactive, isdeleted], map: "scheduletasks_lastactivityon_idx")
+  @@index([nextrunon, startedon, settledon], map: "scheduletasks_nextrunon_idx")
+}
+
+model sessionlogs {
+  id              Int          @id @default(autoincrement())
+  profileid       Int
+  logintime       DateTime     @db.Timestamp(6)
+  locationdetails String?
+  jsondata        String?
+  loginsource     String?      @db.VarChar(50)
+  lastsynctime    DateTime     @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  device          String?
+  actionlogs      actionlogs[]
+  profiles        profiles     @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sessionlog_profileid_fk")
+}
+
+model staticpages {
+  id             Int      @id @unique(map: "staticpages_id_idx") @default(autoincrement())
+  metatagid      Int?
+  url            String   @db.VarChar(250)
+  title          String?  @db.VarChar(250)
+  htmlcontent    String?
+  isfixed        Boolean  @default(false)
+  lastactivityby Int
+  lastactivityon DateTime @default(now()) @db.Timestamp(6)
+  isactive       Boolean  @default(true)
+  isdeleted      Boolean  @default(false)
+
+  @@index([lastactivityby, lastactivityon(sort: Desc), isactive, isdeleted], map: "staticpages_lastactivityby_idx")
+  @@index([metatagid, url], map: "staticpages_metatagid_idx")
+}
+
+model subscribes {
+  id               Int            @id @unique(map: "subscribes_id_idx") @default(autoincrement())
+  firstname        String         @db.VarChar(200)
+  lastname         String?        @db.VarChar(200)
+  email            String         @db.VarChar(100)
+  lastactivityon   DateTime       @db.Timestamp(6)
+  isactive         Boolean        @default(true)
+  isdeleted        Boolean        @default(false)
+  mobile           String?        @db.VarChar(15)
+  profileid        Int?
+  verificationcode String?        @db.VarChar
+  lastactivityby   Int            @default(1)
+  profiles         profiles?      @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "subscribes_profiles_fk")
+  unsubscribes     unsubscribes[]
+
+  @@index([email, profileid, verificationcode, mobile], map: "subscribes_email_idx")
+  @@index([lastactivityon(sort: Desc), isactive, isdeleted], map: "subscribes_lastactivityon_idx")
+}
+
+model subscriptions {
+  id                    Int                  @id @default(autoincrement())
+  profileid             Int
+  orderid               Int?
+  packageid             Int
+  categoryid            Int
+  registrationsessionid Int
+  paymentamount         Decimal?             @db.Decimal(10, 2)
+  paymentnextdate       DateTime?            @db.Timestamp(6)
+  currency              String               @default("SGD") @db.VarChar(3)
+  subscriptiontype      String               @default("Annual") @db.VarChar(100)
+  isautorenew           Boolean              @default(false)
+  lastactivityby        Int
+  lastactivityon        DateTime             @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  isactive              Boolean              @default(true)
+  isdeleted             Boolean              @default(false)
+  categories            categories           @relation(fields: [categoryid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  orders                orders?              @relation(fields: [orderid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles              profiles             @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  registrationsessions  registrationsessions @relation(fields: [registrationsessionid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model testimonials {
+  id             Int        @id(map: "testimonials_pk") @default(autoincrement())
+  categoryid     Int
+  profileid      Int
+  title          String?    @db.VarChar(200)
+  description    String?
+  image          String?    @db.VarChar(200)
+  schoolname     String?    @db.VarChar(200)
+  approvalstatus String?    @db.VarChar(200)
+  approvedon     DateTime?  @db.Timestamp(6)
+  approvedby     Int?
+  lastactivityby Int
+  lastactivityon DateTime   @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  isactive       Boolean    @default(true)
+  isdeleted      Boolean    @default(false)
+  categories     categories @relation(fields: [categoryid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_categories_fk")
+  profiles       profiles   @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "courses_profiles_fk")
+}
+
+model tokens {
+  id             Int      @id(map: "tokens_pk") @unique(map: "tokens_id_idx") @default(autoincrement())
+  profileid      Int
+  tokenkey       String
+  issuedon       DateTime @db.Timestamp(6)
+  expireson      DateTime @db.Timestamp(6)
+  lastactivityon DateTime @db.Timestamp(6)
+  isactive       Boolean  @default(true)
+  refereshtoken  String?
+  profiles       profiles @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "profiles_profiles_fk")
+}
+
+model unsubscribes {
+  id             Int        @id @default(autoincrement())
+  subscribeid    Int
+  reason         String?    @db.VarChar(500)
+  description    String?    @db.VarChar(500)
+  lastactivityby Int
+  lastactivityon DateTime   @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  isactive       Boolean    @default(true)
+  isdeleted      Boolean    @default(false)
+  subscribes     subscribes @relation(fields: [subscribeid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "unsubscribes_subscribes_fk")
+}
+
+model updatetimelogs {
+  id                 Int       @id @default(autoincrement())
+  profileid          Int
+  coursecurriculumid Int
+  jsondata           Json?     @db.Json
+  type               String?   @db.VarChar(10)
+  lastactivityon     DateTime? @db.Timestamp(6)
+  courseid           Int?
+  lecturetitle       String?   @db.VarChar(200)
+}
+
+model userincourses {
+  id              Int       @id(map: "studentincourses_details_pk") @default(autoincrement())
+  profileid       Int
+  courseid        Int
+  joindate        DateTime  @db.Timestamp(6)
+  completiondate  DateTime? @db.Timestamp(6)
+  lastactivityon  DateTime  @db.Timestamp(6)
+  validuptodate   DateTime? @db.Timestamp(6)
+  isactive        Boolean   @default(true)
+  isfavorite      Boolean
+  isarchive       Boolean
+  progress        Int?
+  careerpoints    Int       @default(0)
+  leaderboardrank Int       @default(0)
+  skilllevel      Int       @default(0)
+  ispaid          Boolean?
+  courses         courses   @relation(fields: [courseid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userincourses_courses_fk")
+  profiles        profiles  @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userincourses_profiles_fk")
+}
+
+model userincurriculums {
+  id                 Int       @id @default(autoincrement())
+  profileid          Int
+  coursecurriculumid Int
+  bookmark           String?   @db.VarChar(4000)
+  notes              String?
+  iscompleted        Boolean   @default(false)
+  lastactivityon     DateTime? @db.Timestamp(6)
+  isactive           Boolean   @default(true)
+  other              String?
+  careerpoints       Int       @default(0)
+}
+
+model userinmockassessments {
+  id               Int             @id @default(autoincrement())
+  profileid        Int
+  mockassessmentid Int
+  iscompleted      Boolean         @default(false)
+  lastactivityon   DateTime?       @db.Timestamp(6)
+  isactive         Boolean         @default(true)
+  joindate         DateTime?       @db.Timestamp(6)
+  validuptodate    DateTime?       @db.Timestamp(6)
+  mockassessments  mockassessments @relation(fields: [mockassessmentid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles         profiles        @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model userpermissions {
+  id             Int      @id @default(autoincrement())
+  profileid      Int
+  permissions    String?  @db.VarChar(2000)
+  isactive       Boolean  @default(true)
+  isdeleted      Boolean  @default(false)
+  lastactivityby Int
+  lastactivityon DateTime @db.Timestamp(6)
+  profiles       profiles @relation(fields: [profileid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userpermissions_profiles_fk")
+}
+
+model vouchers {
+  id             Int      @id(map: "vouchers_pk") @default(autoincrement())
+  code           String   @db.VarChar(20)
+  expirydate     DateTime @db.Date
+  amount         Decimal  @db.Decimal(10, 2)
+  type           String   @db.VarChar(10)
+  isactive       Boolean  @default(true)
+  isdeleted      Boolean  @default(false)
+  lastactivityby Int      @default(1)
+  lastactivityon DateTime @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
+  organisationid Int?
+}
