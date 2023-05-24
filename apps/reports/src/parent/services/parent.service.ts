@@ -5,7 +5,7 @@ import { exportToExcel } from 'libs';
 import {
   listQueryHandler,
   listQueryHandlerNested,
-} from 'libs/interfaces/queryHandlerForList.interface';
+} from 'libs/models/queryHandlerForList.interface';
 @Injectable()
 export class ParentService {
   constructor(private prisma: PrismaService) {}

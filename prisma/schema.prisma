@@ -1739,3 +1739,12 @@ model vouchers {
   lastactivityon DateTime @default(dbgenerated("('now'::text)::date")) @db.Timestamp(6)
   organisationid Int?
 }
+
+model filesystem {
+  id       Int     @id @default(autoincrement())
+  title    String
+  path     String?
+  filename String?
+  type     String  @default("file")
+  filesize String?
+}
