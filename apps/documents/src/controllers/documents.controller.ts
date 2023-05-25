@@ -15,8 +15,9 @@ import { extname } from 'path';
 import { diskStorage } from 'multer';
 import { File } from 'multer'; // Import multer.File type from the multer package
 import { PathDto } from '../models/path.dto';
-import { CreateFolderDto } from 'libs';
+import { CreateFolderDto, RequestInterceptor } from 'libs';
 
+@UseInterceptors(RequestInterceptor)
 @Controller('documents')
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
@@ -53,13 +54,8 @@ export class DocumentsController {
       }),
     }),
   )
-  async upload(@UploadedFile() file: File, @Body() body) {
-    console.log(body);
-    return {
-      code: 200,
-      message: 'file uploaded',
-      status: 'success',
-      data: {},
-    };
+  async upload(@UploadedFile() file: File, @Body() body: CreateFolderDto) {
+    console.log(file);
+    return await this.documentsService.uploadFile(body, file);
   }
 }

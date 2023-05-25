@@ -10,6 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'libs';
 import { ValidationPipe } from '@nestjs/common';
+import { LogRepository } from 'libs/repositories/log.repository';
 
 const logStream = fs.createWriteStream('api.log', {
   flags: 'a',
@@ -35,8 +36,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({ origin: '*' });
-  app.use(morgan('dev', { stream: logStream }));
-
+  app.use(morgan('combined', { stream: logStream }));
   await app.listen(3001);
 }
 bootstrap();

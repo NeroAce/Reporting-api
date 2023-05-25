@@ -9,3 +9,4 @@ export * from './models/queryHandlerForList.interface';
 export * from './repositories/user.repository';
 export * from './models/Response.interface';
 export * from './models/create-folder.dto';
+export * from './Interceptor/request.interceptor';
